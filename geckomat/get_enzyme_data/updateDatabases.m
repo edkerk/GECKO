@@ -8,7 +8,8 @@
 %       Entry - Protein names - Gene names - EC number - Sequence
 %       OBS: filter with the Swiss-Prot option
 % 
-% Benjamín Sánchez & Cheng Zhang. Last edited: 2017-10-24
+% Benjamín Sánchez & Cheng Zhang
+% Eduard Kerkhoven - 2018-10-02 - Modified for S. coelicolor
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [swissprot,kegg] = updateDatabases
@@ -18,7 +19,7 @@ swissprot = buildSWISSPROTtable;
 
 %Download KEGG data:
 mkdir ../../databases/KEGG
-downloadKEGGdata('sce')
+downloadKEGGdata('sco')
 
 %Build KEGG table
 kegg = buildKEGGtable;
@@ -150,15 +151,15 @@ for i = 1:length(file_names)
                 
             %6th column: pathway
             elseif strcmp(line(1:7),'PATHWAY')
-                start    = strfind(line,'sce');
+                start    = strfind(line,'sco');
                 pathway  = line(start(1):end);
                 end_path = false;
                 for k = j+1:length(text)
-                    nospace = strrep(text{k},'sce01100  Metabolic pathways','');
+                    nospace = strrep(text{k},'sco01100  Metabolic pathways','');
                     nospace = strrep(nospace,' ','');
                     if length(nospace) > 10
-                        if strcmp(nospace(1:3),'sce') && ~end_path
-                            start    = strfind(text{k},'sce');
+                        if strcmp(nospace(1:3),'sco') && ~end_path
+                            start    = strfind(text{k},'sco');
                             pathway  = [pathway ' ' text{k}(start(1):end)];
                         else
                             end_path = true;

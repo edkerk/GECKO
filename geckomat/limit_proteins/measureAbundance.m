@@ -8,10 +8,9 @@ function [f,count] = measureAbundance(enzymes)
 
 %Read downloaded data of abundance:
 fID       = fopen('../../databases/prot_abundance.txt');
-data      = textscan(fID,'%s %s %f','delimiter','\t','HeaderLines',12);
-genes     = data{2};
-genes     = strrep(genes,'4932.','');
-abundance = data{3};
+data      = textscan(fID,'%s %f %f','delimiter','\t','HeaderLines',12);
+genes     = data{1};
+abundance = data{2};
 fclose(fID);
 
 %Load swissprot data:

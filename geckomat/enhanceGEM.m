@@ -13,7 +13,7 @@ if nargin < 4
 end
 
 %Provide your organism scientific name
-org_name = 'saccharomyces cerevisiae';
+org_name = 'streptomyces coelicolor';
 
 %Add RAVEN fields for easier visualization later on:
 format short e
