@@ -16,57 +16,54 @@ if nargin < 4
 end
 
 %Compute carbohydrate and lipid new amounts, based on:
-%1. Total mass remains constant, i.e. Pbase+Cbase+Lbase = Ptot+Ctot+Ltot
+%1. Total mass remains constant, i.e. Pbase+Cbase+Lbase+Rbase =
+%   Ptot+Ctot+Ltot+Rtot
 %2. Difference in mass is distributed proportionally, i.e. Ctot/Ltot = Cbase/Lbase
-[~,Pbase,Cbase,~,~,Lbase] = sumBioMass(model);
-Ctot = Cbase + (Pbase - Ptot)*Cbase/(Lbase+Cbase);
-Ltot = Lbase + (Pbase - Ptot)*Lbase/(Lbase+Cbase);
+% [X,P,C,R,D,L,M,W] = sumBioMass(model)
+[~,Pbase,Cbase,Rbase,Dtot,Lbase,~,Wtot] = sumBioMass(model);
+
+Ctot = Cbase + (Pbase - Ptot) * (Cbase / (Cbase+Rbase+Lbase));
+Rtot = Rbase + (Pbase - Ptot) * (Rbase / (Cbase+Rbase+Lbase));
+Ltot = Lbase + (Pbase - Ptot) * (Lbase / (Cbase+Rbase+Lbase));
 
 %Compute rescaling fractions:
 fP = Ptot/Pbase;
 fC = Ctot/Cbase;
+fR = Rtot/Rbase;
 fL = Ltot/Lbase;
 
 %Change compositions:
 if scale_comp
     model = rescalePseudoReaction(model,'protein',fP);
     model = rescalePseudoReaction(model,'carbohydrate',fC);
-    model = rescalePseudoReaction(model,'lipid backbone',fL);
-    model = rescalePseudoReaction(model,'lipid chain',fL);
+    model = rescalePseudoReaction(model,'lipid',fL);
+    model = rescalePseudoReaction(model,'RNA',fR);
 end
 
 %Fit GAM if not available:
-if isempty(GAM)
-    GAM = fitGAM(model);
-end
-
-%Change GAM:
-xr_pos = strcmp(model.rxnNames,'biomass pseudoreaction');
-for i = 1:length(model.mets)
-    S_ix  = model.S(i,xr_pos);
-    isGAM = sum(strcmp({'ATP','ADP','H2O','H+','phosphate'},model.metNames{i})) == 1;
-    if S_ix ~= 0 && isGAM
-        %Polymerization costs from Forster et al 2003 - table S8:
-        model.S(i,xr_pos) = sign(S_ix)*(GAM + 37.7*Ptot + 12.8*Ctot);
-    end
-end
-
+% if isempty(GAM)
+%     GAM = fitGAM(model);
+% end
+% 
+% %Change GAM:
+rxnIdx = getIndexes(model,'BM_growth','rxns');
+metIdx = getIndexes(model,{'atp_c','adp_c','h2o_c','h_c','pi_c'},'mets');
+%Polymerization costs from Borodina et al 2005
+GAM = GAM + 40*Ptot + 4.4*Dtot + 1.25*Rtot + 5.026*Wtot
+model.S(metIdx, rxnIdx) = sign(model.S(metIdx, rxnIdx)) .* GAM;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function model = rescalePseudoReaction(model,metName,f)
 
-rxnName = [metName ' pseudoreaction'];
-rxnPos  = strcmp(model.rxnNames,rxnName);
-for i = 1:length(model.mets)
-    S_ir   = model.S(i,rxnPos);
-    isProd = strcmp(model.metNames{i},metName);
-    if S_ir ~= 0 && ~isProd
-        model.S(i,rxnPos) = f*S_ir;
-    end
-end
+rxnPos  = strcmp(model.rxnNames,[metName ' pseudoreaction']);
 
+mets = find(model.S(:,rxnPos));
+pseudoMet = find(strcmp(model.metNames(mets),[metName ' pseudometabolite']));
+mets(pseudoMet)=[]; % Don't scale pseudometabolites
+
+model.S(mets,rxnPos) = model.S(mets,rxnPos)*f;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
