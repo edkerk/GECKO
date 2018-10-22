@@ -7,17 +7,19 @@
 function GAM = fitGAM(model)
 
 %Load chemostat data:
-fid = fopen('../../databases/chemostatData.tsv','r');
-exp_data = textscan(fid,'%f32 %f32 %f32 %f32','Delimiter','\t','HeaderLines',1);
-exp_data = [exp_data{1} exp_data{2} exp_data{3} exp_data{4}];
+fid = fopen('../../../../../ComplementaryData/growth/cultivation_data.tab','r');
+exp_data = textscan(fid,'%f32 %f32 %f32 %f32 %f32 %f32 %f32 %s %s','Delimiter','\t','HeaderLines',1);
+exp_data = [exp_data{1} exp_data{2}]; % exp_data{3} exp_data{4} exp_data{5} exp_data{6} exp_data{7}];
 fclose(fid);
+
+exp_data(6:end,:)=[];
 
 %Remove limitation on enzymes (if any):
 model = setParam(model,'ub','prot_pool_exchange',+1000);
 
 %GAMs to span:
 disp('Estimating GAM:')
-GAM = 20:5:50;
+GAM = 20:5:100;
 
 %1st iteration:
 GAM = iteration(model,GAM,exp_data);
@@ -80,8 +82,8 @@ function mod_data = simulateChemostat(model,exp_data,GAM)
 model = scaleBioMass(model,Pbase,GAM,false);
 
 %Relevant positions:
-pos(1) = find(strcmp(model.rxnNames,'growth'));
-pos(2) = find(strcmp(model.rxnNames,'D-glucose exchange (reversible)'));
+pos(1) = getIndexes(model,'BM_growth','rxns');
+pos(2) = getIndexes(model,'EX_glc__D_e_REV','rxns');
 pos(3) = find(strcmp(model.rxnNames,'oxygen exchange (reversible)'));
 pos(4) = find(strcmp(model.rxnNames,'carbon dioxide exchange'));
 
