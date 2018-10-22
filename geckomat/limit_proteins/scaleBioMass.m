@@ -46,11 +46,11 @@ end
 % end
 % 
 % %Change GAM:
-rxnIdx = getIndexes(model,'BM_growth','rxns');
-metIdx = getIndexes(model,{'atp_c','adp_c','h2o_c','h_c','pi_c'},'mets');
-%Polymerization costs from Borodina et al 2005
-GAM = GAM + 40*Ptot + 4.4*Dtot + 1.25*Rtot + 5.026*Wtot
-model.S(metIdx, rxnIdx) = sign(model.S(metIdx, rxnIdx)) .* GAM;
+% rxnIdx = getIndexes(model,'BM_growth','rxns');
+% metIdx = getIndexes(model,{'atp_c','adp_c','h2o_c','h_c','pi_c'},'mets');
+% %Polymerization costs from Borodina et al 2005
+% GAM = GAM + 40*Ptot + 4.4*Dtot + 1.25*Rtot + 5.026*Wtot;
+% model.S(metIdx, rxnIdx) = sign(model.S(metIdx, rxnIdx)) .* GAM;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
