@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % model = scaleBioMass(model,Ptot,GAM,scale_comp)
 % 
-% Benjamin Sanchez. Last update: 2018-10-09
+% Benjamin Sanchez. Last update: 2018-10-23
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function model = scaleBioMass(model,Ptot,GAM,scale_comp)
