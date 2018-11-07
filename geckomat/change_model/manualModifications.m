@@ -83,7 +83,7 @@ for i = 1:length(model.rxns)
     subs_pos = find(S(:,i) < 0);
     %Get the proteins that are part of the i-th rxn
     prot_pos = find(~cellfun(@isempty,strfind(model.mets,'prot_')));
-    int_pos  = intersect(subs_pos,prot_pos)';
+    int_pos  = transpose(intersect(subs_pos,prot_pos));
     %%%%%%%%%%%%%%%%%%%%%%%%%%  Individual Changes:  %%%%%%%%%%%%%%%%%%%%%%%%
     for j = 1:length(int_pos)
         enzName = model.mets(int_pos(j));
@@ -93,7 +93,9 @@ for i = 1:length(model.rxns)
             model.S(int_pos(j),i) = newValue;
         end
     end
-    disp(['Improving model with curated data: Ready with rxn #' num2str(i)])
+    if i/250 == fix(i/250)
+        disp(['Improving model with curated data: Ready with rxn #' num2str(i)])
+    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%% Other manual changes: %%%%%%%%%%%%%%%%%%%%%%%%%%%

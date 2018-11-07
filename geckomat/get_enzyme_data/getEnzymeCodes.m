@@ -149,7 +149,9 @@ for i = 1:n
             end
         end
     end
-    disp(['Getting enzyme codes: Ready with rxn ' int2str(i)])
+    if i/250 == fix(i/250)
+        disp(['Getting enzyme codes: Ready with rxn ' int2str(i)])
+    end
 end
 model_data.model        = model;
 model_data.substrates   = substrates;
