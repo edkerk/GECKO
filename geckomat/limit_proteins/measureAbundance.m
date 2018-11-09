@@ -4,14 +4,7 @@
 % Benjamin J. Sanchez. Last edited: 2018-08-10
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [f,count] = measureAbundance(enzymes)
-
-%Read downloaded data of abundance:
-fID       = fopen('../../databases/prot_abundance.txt');
-data      = textscan(fID,'%s %f %f','delimiter','\t','HeaderLines',12);
-genes     = data{1};
-abundance = data{2};
-fclose(fID);
+function [f,count] = measureAbundance(enzymes,genes,abundance)
 
 %Load swissprot data:
 data      = load('../../databases/ProtDatabase.mat');
@@ -43,7 +36,7 @@ for i = 1:length(genes)
     end
 end
 
-f     = sum(concs(counter))/sum(concs);
+f     = sum(concs(counter),'omitnan')/sum(concs,'omitnan');
 count = [length(counter);sum(counter)];
 
 end

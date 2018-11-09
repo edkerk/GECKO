@@ -8,7 +8,7 @@ function [model,enzUsages,modifications] = constrainEnzymes(model,Ptot,sigma,f,G
 
 %Compute f if not provided:
 if nargin < 4
-    [f,~] = measureAbundance(ecModel.enzymes);
+    [f,~] = measureAbundance(ecModel.enzymes,pIDs,data);
 end
 
 %Leave GAM empty if not provided (will be fitted later):
@@ -32,8 +32,7 @@ disp('Matching data to enzymes in model...')
 for i = 1:length(model.enzymes)
     match = false;
     for j = 1:length(pIDs)
-        if strcmpi(pIDs{j},model.enzymes{i}) && ~match
-            model.concs(i) = data(j)*model.MWs(i); %g/gDW
+        if strcmpi(pIDs{j},model.enzGenes{i}) && ~match && ~isnan(data(j))
             rxn_name       = ['prot_' model.enzymes{i} '_exchange'];
             pos            = strcmpi(rxn_name,model.rxns);
             model.ub(pos)  = data(j);
@@ -52,7 +51,7 @@ Pbase = sumProtein(model);
 
 if Pmeasured > 0
     %Calculate fraction of non measured proteins in model out of remaining mass:
-    [fn,~] = measureAbundance(model.enzymes(~measured),'prot_abundance.txt');
+    [fn,~] = measureAbundance(model.enzymes(~measured),pIDs,data);
     fm     = Pmeasured/Ptot;
     f      = fn/(1-fm);
     %Discount measured mass from global constrain:
@@ -67,7 +66,7 @@ if sum(strcmp(model.rxns,'prot_pool_exchange')) == 0
 end
 
 %Modify protein/carb content and GAM:
-model = scaleBioMass(model,Ptot,GAM);
+%model = scaleBioMass(model,Ptot,GAM);
 
 %Display some metrics:
 disp(['Total protein amount measured = '     num2str(Pmeasured)              ' g/gDW'])
