@@ -138,6 +138,18 @@ for i = 1:length(model.rxns)
         end
     end
 end
+
+% Aconitase (Q7AKF3/EC 4.2.1.3): The rxn is represented as a two
+% step rxn, so the kcat must be divided by 2
+index = find(strcmpi('prot_Q7AKF3',model.mets));
+if ~isempty(index)
+    rxnIndxs = find(model.S(:,index));
+    if ~isempty(rxnIndxs)
+        rxnIndxs = rxnIndxs(1:end-2);
+        model.S(rxnIndxs,index) = model.S(rxnIndxs,index)/2;
+    end
+end
+
 % Remove saved arm reactions:
 model = removeReactions(model,model.rxns(arm_pos(1:p)),true);
 
@@ -192,43 +204,89 @@ if strcmpi('prot_Q9KXQ4',enzName)
         modifications{1} = [modifications{1}; 'Q9KXQ4'];
         modifications{2} = [modifications{2}; reaction];
     end
-    
-% phosphoribosylformylglycinamidine synthase (Q9RKK5/EC6.3.5.3) - kcat
+end
+% phosphoribosylformylglycinamidine synthase (Q9RKK5,6,7/EC6.3.5.3) - kcat
 % automatically suggested was for ammonium as substrate, not glutamine.
-% Instead, use specific activity as provided in BRENDA, which was asayed
+% Instead, use specific activity as provided in BRENDA, which was assayed
 % with glutamine according to original paper (doi:10.1021/bi00432a017)
-elseif strcmpi('prot_Q9RKK5',enzName)
-    if contains(reaction,'phosphoribosylformylglycinamidine synthase (')
+if contains(reaction,'phosphoribosylformylglycinamidine synthase (')
+    if strcmpi('prot_Q9RKK5',enzName)
         newValue         = -(2.15*60*MW_set)^-1; % BRENDA: WT E. coli
         modifications{1} = [modifications{1}; 'Q9RKK5'];
         modifications{2} = [modifications{2}; reaction];
     end
+    if strcmpi('prot_Q9RKK6',enzName)
+        newValue         = -(2.15*60*MW_set)^-1; % BRENDA: WT E. coli
+        modifications{1} = [modifications{1}; 'Q9RKK6'];
+        modifications{2} = [modifications{2}; reaction];
+    end
+    if strcmpi('prot_Q9RKK7',enzName)
+        newValue         = -(2.15*60*MW_set)^-1; % BRENDA: WT E. coli
+        modifications{1} = [modifications{1}; 'Q9RKK7'];
+        modifications{2} = [modifications{2}; reaction];
+    end
+end
 % methylmalonate-semialdehyde dehydrogenase (malonic semialdehyde)
-% (Q9L1J1/EC6.3.5.3) - kcat automatically assigned was from archaea,
+% (Q9L1J1/EC1.2.1.27) - kcat automatically assigned was from archaea,
 % instead use value from Bacillus subtilis (doi:10.1074/jbc.M110.213280).
-elseif strcmpi('prot_Q9L1J1',enzName)
+if strcmpi('prot_Q9L1J1',enzName)
     if contains(reaction,'methylmalonate-semialdehyde dehydrogenase (malonic semialdehyde) (')
-        newValue         = -(2.2*60*MW_set)^-1; % BRENDA: WT B. subtilis
+        newValue         = -(2.2*3600)^-1; % BRENDA: WT B. subtilis
         modifications{1} = [modifications{1}; 'Q9L1J1'];
         modifications{2} = [modifications{2}; reaction];
     end
+end
 % phosphoribosyl-ATP pyrophosphatase (Q9EWK0/EC3.6.1.31) - kcat
 % automatically assigned was calculated from specific activity in
 % Salmonella enterica, but the reported value was measured in cell extract,
 % not from purified enzyme. Instead, use specific activity from
 % S. cerevisiae (PMID:379004).
-elseif strcmpi('prot_Q9EWK0',enzName)
+if strcmpi('prot_Q9EWK0',enzName)
     if contains(reaction,'phosphoribosyl-ATP pyrophosphatase (')
         newValue         = -(332*60*MW_set)^-1; % BRENDA: WT E. coli
         modifications{1} = [modifications{1}; 'Q9EWK0'];
         modifications{2} = [modifications{2}; reaction];
     end
-% % glyceraldehyde-3-phosphate dehydrogenase (Q9Z518/EC1.2.1.12) - kcat
-% elseif strcmpi('prot_Q9Z518',enzName)
-%     if contains(reaction,'glyceraldehyde-3-phosphate dehydrogenase (')
-%         newValue         = -(332*60*MW_set)^-1; % BRENDA: WT B. subtilis
-%         modifications{1} = [modifications{1}; 'Q9Z518'];
-%         modifications{2} = [modifications{2}; reaction];
+end
+% glyceraldehyde-3-phosphate dehydrogenase (Q9Z518/EC1.2.1.12) - assigned
+% kcat from Corynebacterium glutamicum was highly growth limiting.
+% Instead use specific activity measured of pentalenolactone sensitive
+% gapdh in Streptomyces arenae (PMID:6822480)
+if strcmpi('prot_Q9Z518',enzName)
+    if contains(reaction,'glyceraldehyde-3-phosphate dehydrogenase (')
+        newValue         = -(112*60*MW_set)^-1;
+        modifications{1} = [modifications{1}; 'Q9Z518'];
+        modifications{2} = [modifications{2}; reaction];
     end
 end
-
+% phosphoserine phosphatase (L-serine) (Q9S281/EC3.1.3.3) - assigned
+% kcat from Mycobacterium tuberculosis was highly growth limiting.
+% Match with pseudonym of substrate L-phosphoserine, use reported kcat
+% from Porphyromonas gingivalis (2.94 min-1) (PMID:16832066)
+if strcmpi('prot_Q9S281',enzName)
+    if contains(reaction,'phosphoserine phosphatase (L-serine) (')
+        newValue         = -(2.94*60)^-1;
+        modifications{1} = [modifications{1}; 'Q9Z518'];
+        modifications{2} = [modifications{2}; reaction];
+    end
+end
+% thymidylate synthase (Flavin-dependent) (O86840/EC2.1.1.148) -
+% assigned kcat from Helicobacter pylori was growth limiting. Recent
+% new kcat value from E. coli (not yet in BRENDA) (PMID:29715278)
+if strcmpi('prot_O86840',enzName)
+    if contains(reaction,'thymidylate synthase (Flavin-dependent) (')
+        newValue         = -(8.7*3600)^-1;
+        modifications{1} = [modifications{1}; 'Q9Z518'];
+        modifications{2} = [modifications{2}; reaction];
+    end
+end
+% ATP synthase (Q9K4D5,Q9K4D4,P0A300/EC3.6.3.14) - assigned activity was 
+% growth limiting. Use kcat from Bacillus sp. (PMID:24876384)
+if (strcmpi('prot_Q9K4D5',enzName) || strcmpi('prot_P0A300',enzName) || ...
+    strcmpi('prot_Q9K4D4',enzName)) && ...
+    contains(reaction,'ATP synthase (four protons for one ATP) (')
+    newValue      = -(390*3600)^-1;
+    modifications{1} = [modifications{1}; 'Q9K4D5'];
+    modifications{2} = [modifications{2}; reaction];
+end
+end
