@@ -262,11 +262,11 @@ end
 % phosphoserine phosphatase (L-serine) (Q9S281/EC3.1.3.3) - assigned
 % kcat from Mycobacterium tuberculosis was highly growth limiting.
 % Match with pseudonym of substrate L-phosphoserine, use reported kcat
-% from Porphyromonas gingivalis (2.94 min-1) (PMID:16832066)
+% from Porphyromonas gingivalis (1508 min-1) (PMID:16832066)
 if strcmpi('prot_Q9S281',enzName)
     if contains(reaction,'phosphoserine phosphatase (L-serine) (')
-        newValue         = -(2.94*60)^-1;
-        modifications{1} = [modifications{1}; 'Q9Z518'];
+        newValue         = -(1508*60)^-1;
+        modifications{1} = [modifications{1}; 'Q9S281'];
         modifications{2} = [modifications{2}; reaction];
     end
 end
@@ -276,7 +276,7 @@ end
 if strcmpi('prot_O86840',enzName)
     if contains(reaction,'thymidylate synthase (Flavin-dependent) (')
         newValue         = -(8.7*3600)^-1;
-        modifications{1} = [modifications{1}; 'Q9Z518'];
+        modifications{1} = [modifications{1}; 'O86840'];
         modifications{2} = [modifications{2}; reaction];
     end
 end
@@ -289,4 +289,37 @@ if (strcmpi('prot_Q9K4D5',enzName) || strcmpi('prot_P0A300',enzName) || ...
     modifications{1} = [modifications{1}; 'Q9K4D5'];
     modifications{2} = [modifications{2}; reaction];
 end
+% cytochrome oxidase bd (menaquinol-9: 2 protons) (Q9K451/EC1.9.3.1) -
+% assigned activity was growth limiting. Use artifical number
+if strcmpi('prot_Q9K451',enzName) && ...
+    contains(reaction,'cytochrome oxidase bd (menaquinol-9: 2 protons) (')
+    newValue      = -(2000*3600)^-1;
+    modifications{1} = [modifications{1}; 'Q9K451'];
+    modifications{2} = [modifications{2}; reaction];
+end
+% 3-oxoacyl-[acyl-carrier-protein] synthase (Q9Z4Y3/EC2.3.1.179) -
+% assigned activity from E. coli was growth limiting, 37% of total
+% protein in pool-model. S.A. was mesured in Streptomyces glauscens, take
+% highest reported value in that paper (PMID:9721286). While this is
+% reported as 20.5 pmol mg min, this is MUCH more likely to be 20.5 umol
+% mg min.
+if strcmpi('prot_Q9Z4Y3',enzName) && ...
+    (contains(reaction,'3-oxoacyl-[acyl-carrier-protein] synthase (') | ...
+    contains(reaction,'beta-ketoacyl-ACP synthase (') | ...
+	contains(reaction,'3-Oxo-glutaryl-[ACP] methyl ester synthase') | ...
+	contains(reaction,'3-Oxo-pimeloyl-[ACP] methyl ester synthase'))    
+    newValue      = -(20.5*60*MW_set)^-1;
+    modifications{1} = [modifications{1}; 'Q9Z4Y3'];
+    modifications{2} = [modifications{2}; reaction];
+end
+% demethylmenaquinone methyltransferase (Q9XAP8/EC2.1.1.163) -
+% assigned activity was growth limiting. No activities measured, use artifical number
+if strcmpi('prot_Q9XAP8',enzName) && ...
+    (contains(reaction,'S-adenosylmethione:2-demthylmenaquinole methyltransferase (menaquinone 9)') | ...
+    contains(reaction,'demethylmenaquinone methyltransferase'))
+    newValue      = -(2000*3600)^-1;
+    modifications{1} = [modifications{1}; 'Q9XAP8'];
+    modifications{2} = [modifications{2}; reaction];
+end
+
 end
