@@ -6,7 +6,7 @@
 
 function [X,P,C,R,D,L,M,W] = sumBioMass(model)
 %Get main fractions:
-[P,X] = getFraction(model,'protein',0);
+[P,X] = getFraction(model,'Protein',0);
 [C,X] = getFraction(model,'carbohydrate',X);
 [R,X] = getFraction(model,'RNA',X);
 [D,X] = getFraction(model,'DNA',X);
