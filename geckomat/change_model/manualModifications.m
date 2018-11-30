@@ -211,17 +211,17 @@ end
 % with glutamine according to original paper (doi:10.1021/bi00432a017)
 if contains(reaction,'phosphoribosylformylglycinamidine synthase (')
     if strcmpi('prot_Q9RKK5',enzName)
-        newValue         = -(2.15*60*MW_set)^-1; % BRENDA: WT E. coli
+        newValue         = -(5.05*3600)^-1; % BRENDA: WT E. coli
         modifications{1} = [modifications{1}; 'Q9RKK5'];
         modifications{2} = [modifications{2}; reaction];
     end
     if strcmpi('prot_Q9RKK6',enzName)
-        newValue         = -(2.15*60*MW_set)^-1; % BRENDA: WT E. coli
+        newValue         = -(5.05*3600)^-1; % BRENDA: WT E. coli
         modifications{1} = [modifications{1}; 'Q9RKK6'];
         modifications{2} = [modifications{2}; reaction];
     end
     if strcmpi('prot_Q9RKK7',enzName)
-        newValue         = -(2.15*60*MW_set)^-1; % BRENDA: WT E. coli
+        newValue         = -(5.05*3600)^-1; % BRENDA: WT E. coli
         modifications{1} = [modifications{1}; 'Q9RKK7'];
         modifications{2} = [modifications{2}; reaction];
     end
@@ -243,7 +243,7 @@ end
 % S. cerevisiae (PMID:379004).
 if strcmpi('prot_Q9EWK0',enzName)
     if contains(reaction,'phosphoribosyl-ATP pyrophosphatase (')
-        newValue         = -(332*60*MW_set)^-1; % BRENDA: WT E. coli
+        newValue         = -(526*3600)^-1; % BRENDA: WT E. coli
         modifications{1} = [modifications{1}; 'Q9EWK0'];
         modifications{2} = [modifications{2}; reaction];
     end
@@ -299,16 +299,15 @@ if strcmpi('prot_Q9K451',enzName) && ...
 end
 % 3-oxoacyl-[acyl-carrier-protein] synthase (Q9Z4Y3/EC2.3.1.179) -
 % assigned activity from E. coli was growth limiting, 37% of total
-% protein in pool-model. S.A. was mesured in Streptomyces glauscens, take
-% highest reported value in that paper (PMID:9721286). While this is
-% reported as 20.5 pmol mg min, this is MUCH more likely to be 20.5 umol
-% mg min.
+% protein in pool-model. Not in BRENDA, but activity was also measured in 
+% Streptomyces coelicolor (PMID:22136753). Different sets of substrates are
+% assayed in that paper, take the highest reported activity of 20.33 min-1.
 if strcmpi('prot_Q9Z4Y3',enzName) && ...
     (contains(reaction,'3-oxoacyl-[acyl-carrier-protein] synthase (') | ...
     contains(reaction,'beta-ketoacyl-ACP synthase (') | ...
 	contains(reaction,'3-Oxo-glutaryl-[ACP] methyl ester synthase') | ...
 	contains(reaction,'3-Oxo-pimeloyl-[ACP] methyl ester synthase'))    
-    newValue      = -(20.5*60*MW_set)^-1;
+    newValue      = -(20.33*60)^-1;
     modifications{1} = [modifications{1}; 'Q9Z4Y3'];
     modifications{2} = [modifications{2}; reaction];
 end
@@ -321,5 +320,22 @@ if strcmpi('prot_Q9XAP8',enzName) && ...
     modifications{1} = [modifications{1}; 'Q9XAP8'];
     modifications{2} = [modifications{2}; reaction];
 end
-
+% GTP cyclohydrolase 1 (Q9X8I3/EC3.5.4.16) - one of the topUsedEnzymes.
+% Use S.A. measured from Streptomyces tubercidicus (PMID:9868539).
+% BRENDA reports 9.1 umol, but paper states 90 nmol/min/mg protein.
+if strcmpi('prot_Q9X8I3',enzName) && contains(reaction,'GTP cyclohydrolase I')
+    newValue      = -(0.09*60*MW_set)^-1;
+    modifications{1} = [modifications{1}; 'Q9X8I3'];
+    modifications{2} = [modifications{2}; reaction];
+end
+% cardiolipin synthase (Q9KZP3/EC2.7.8.41) - one of the topUsedEnzymes.
+% Specific activity was also measured in E. coli (not included in BRENDA)
+% as 29 nmol/min/mg protein (PMID:8262233). Assume 54.8 kDa molecular
+% weight, k-cat is 0.026487 sec-1
+if strcmpi('prot_Q9KZP3',enzName) && ...
+        contains(reaction,'cardiolipin synthase II')
+    newValue      = -(0.026487*3600)^-1;
+    modifications{1} = [modifications{1}; 'Q9KZP3'];
+    modifications{2} = [modifications{2}; reaction];
+end
 end
