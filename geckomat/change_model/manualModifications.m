@@ -110,7 +110,7 @@ for i = 1:length(model.rxns)-1
         end
     end
 end
-model = removeReactions(model,model.rxns(rem_rxn),true);
+model = removeReactions(model,model.rxns(rem_rxn),true,true);
 % Merge arm reactions to reactions with only one isozyme (2017-01-17):
 arm_pos = zeros(size(model.rxns));
 p       = 0;
@@ -128,8 +128,8 @@ for i = 1:length(model.rxns)
         end
         if k == 1
             %Condense both reactions in one:
-            equations.mets          = model.mets;
-            equations.stoichCoeffs  = model.S(:,i) + model.S(:,pos);
+            equations.mets         = model.mets;
+            equations.stoichCoeffs = model.S(:,i) + model.S(:,pos);
             model = changeRxns(model,model.rxns(pos),equations);
             model.grRules{pos} = grRule;
             p          = p + 1;
@@ -151,7 +151,7 @@ if ~isempty(index)
 end
 
 % Remove saved arm reactions:
-model = removeReactions(model,model.rxns(arm_pos(1:p)),true);
+model = removeReactions(model,model.rxns(arm_pos(1:p)),true,true);
 
 % Remove unused enzymes after manual curation (2017-01-16):
 rem_enz = false(size(model.enzymes));

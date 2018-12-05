@@ -1,14 +1,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % model = constrainEnzymes(model,Ptot,sigma,f,GAM,pIDs,data,gRate,GlucUptake)
 % 
-% Benjamin J. Sanchez. Last edited: 2018-10-27
+% Benjamin J. Sanchez. Last edited: 2018-11-11
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [model,enzUsages,modifications] = constrainEnzymes(model,Ptot,sigma,f,GAM,pIDs,data,gRate,GlucUptake)
 
 %Compute f if not provided:
 if nargin < 4
-    [f,~] = measureAbundance(ecModel.enzymes);
+    [f,~] = measureAbundance(model.enzymes);
 end
 
 %Leave GAM empty if not provided (will be fitted later):
@@ -18,8 +18,8 @@ end
 
 %No UB will be changed if no data is available -> pool = all enzymes(FBAwMC)
 if nargin < 6
-    pIDs          = cell(0,1);
-    data          = zeros(0,1);
+    pIDs = cell(0,1);
+    data = zeros(0,1);
 end
 
 %Remove zeros or negative values
@@ -80,6 +80,9 @@ disp(['Total protein in model = '            num2str(Ptot)                   ' g
 if nargin > 7
     [model,enzUsages,modifications] = flexibilizeProteins(model,gRate,GlucUptake);
     plotHistogram(enzUsages,'Enzyme usage [-]',[0,1],'Enzyme usages','usages')
+else
+    enzUsages     = zeros(0,1);
+    modifications = cell(0,1);
 end
 
 %Plot histogram (if there are measurements):
