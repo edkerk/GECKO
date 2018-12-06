@@ -290,7 +290,8 @@ if (strcmpi('prot_Q9K4D5',enzName) || strcmpi('prot_P0A300',enzName) || ...
     modifications{2} = [modifications{2}; reaction];
 end
 % cytochrome oxidase bd (menaquinol-9: 2 protons) (Q9K451/EC1.9.3.1) -
-% assigned activity was growth limiting. Use artifical number
+% assigned activity was growth limiting. Take highest reported kcat for
+% this EC number
 if strcmpi('prot_Q9K451',enzName) && ...
     contains(reaction,'cytochrome oxidase bd (menaquinol-9: 2 protons) (')
     newValue      = -(2000*3600)^-1;
@@ -311,12 +312,15 @@ if strcmpi('prot_Q9Z4Y3',enzName) && ...
     modifications{1} = [modifications{1}; 'Q9Z4Y3'];
     modifications{2} = [modifications{2}; reaction];
 end
-% demethylmenaquinone methyltransferase (Q9XAP8/EC2.1.1.163) -
-% assigned activity was growth limiting. No activities measured, use artifical number
+% demethylmenaquinone methyltransferase (Q9XAP8/EC2.1.1.163) - assigned
+% activity was growth limiting. No activities measured. Take the highest
+% kcat reported for Streptomyces spp with EC2.1.1.-, this is 8.15 for
+% phenylpyruvate C3-methyltransferase (EC2.1.1.281) in Streptomyces
+% hygroscopicus (PMID:19731276)
 if strcmpi('prot_Q9XAP8',enzName) && ...
     (contains(reaction,'S-adenosylmethione:2-demthylmenaquinole methyltransferase (menaquinone 9)') | ...
     contains(reaction,'demethylmenaquinone methyltransferase'))
-    newValue      = -(2000*3600)^-1;
+    newValue      = -(8.15*3600)^-1;
     modifications{1} = [modifications{1}; 'Q9XAP8'];
     modifications{2} = [modifications{2}; reaction];
 end
@@ -336,6 +340,17 @@ if strcmpi('prot_Q9KZP3',enzName) && ...
         contains(reaction,'cardiolipin synthase II')
     newValue      = -(0.026487*3600)^-1;
     modifications{1} = [modifications{1}; 'Q9KZP3'];
+    modifications{2} = [modifications{2}; reaction];
+end
+% 4-hydroxy-2,2'-bipyrrole-5-methanol methyltransferase (O54158/EC2.1.1.-) 
+% - dominates during RED production, kcat is not from a measured value.
+% Take the highest kcat reported for Streptomyces spp with EC2.1.1.-, this
+% is 8.15 for phenylpyruvate C3-methyltransferase (EC2.1.1.281) in
+% Streptomyces hygroscopicus (PMID:19731276)
+if strcmpi('prot_O54158',enzName) && ...
+        contains(reaction,'4-hydroxy-2,2''-bipyrrole-5-methanol methyltransferase')
+    newValue      = -(8.15*3600)^-1;
+    modifications{1} = [modifications{1}; 'O54158'];
     modifications{2} = [modifications{2}; reaction];
 end
 end
