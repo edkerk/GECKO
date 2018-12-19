@@ -149,7 +149,7 @@ for i = 1:n
             end
         end
     end
-    if i/250 == fix(i/250)
+    if rem(i,100) == 0 | i == n
         disp(['Getting enzyme codes: Ready with rxn ' int2str(i)])
     end
 end

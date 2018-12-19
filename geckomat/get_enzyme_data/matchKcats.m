@@ -113,9 +113,9 @@
          end
      end
      %Display progress:
-     if i/10 == fix(i/10)
+    if rem(i,10) == 0 | i == mM
         disp(['Matching kcats: Ready with rxn ' num2str(i)])
-     end
+    end
  end
   
  kcats.forw = forw;
