@@ -54,3 +54,4 @@ docs/_*
 geckopy/geckopy/data_files/*.xml
 *~
 geckomat/*.mat
+models/
