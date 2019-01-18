@@ -33,7 +33,7 @@ M_enzymes    = generalModel.enzymes;
 for i=1:length(irrevModel.rxns)
     rxn      = irrevModel.rxns{i};
     rxnIndxs = find(contains(generalModel.rxns,rxn)); 
-    %Exclude the original rxn index ('avoids adding it again)
+    %Exclude the original rxn index (avoids adding it again)
     rxnIndxs = rxnIndxs(~strcmpi(generalModel.rxns(rxnIndxs),rxn));
     %As the model as been converted to irreversible format, correspondent
     %additional reactions for forward and backward reactions are added
@@ -101,7 +101,7 @@ for i=1:length(irrevModel.rxns)
         rxnsToAdd.stoichCoeffs = StoichCoeffs;
         %Use RAVEN function for adding new reactions
         ecModel = addRxns(ecModel,rxnsToAdd,1,[],false,true); 
-        disp(['Added additional rxns for: ' rxn])
+        %disp(['Added additional rxns for: ' rxn])
         if any(contains(rxnsToAdd.rxns,[rxn 'No']))
             ecModel = removeReactions(ecModel,rxn);
         end
@@ -120,7 +120,7 @@ ecModel.pathways  = cell(0,1);
 load ('../../Databases/ProtDatabase.mat')
 %Add protein usage reactions
 for i = 1:length(enzymesToAdd)
-    disp(enzymesToAdd{i})
+    %disp(enzymesToAdd{i})
     ecModel = addProtein(ecModel,enzymesToAdd{i},kegg,swissprot);
 end
 cd (current)

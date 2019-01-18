@@ -33,6 +33,6 @@ rxnIdx  = find(ecModel.S(pIdx,:) < 0);
 kcat    = -1./ecModel.S(pIdx,rxnIdx)/3600;
 rxnName = ecModel.rxnNames(rxnIdx);
 
-MW = strcmpi(model.enzymes,protein);
-MW = model.MWs(MW);
+MW = strcmpi(ecModel.enzymes,protein);
+MW = ecModel.MWs(MW);
 end
