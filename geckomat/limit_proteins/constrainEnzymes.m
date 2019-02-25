@@ -71,7 +71,7 @@ concs_measured = model.concs(measured);
 Pmeasured      = sum(concs_measured);
 
 %Get protein content in biomass pseudoreaction:
-Pbase = sumProtein(model);
+Pbase = Ptot;%sumProtein(model);
 
 if Pmeasured > 0
     %Calculate fraction of non measured proteins in model out of remaining mass:
