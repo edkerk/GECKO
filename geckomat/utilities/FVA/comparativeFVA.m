@@ -32,7 +32,10 @@ rangeGEM = [];
 indexes  = [];
 range_EC = [];
 %Get the index for all the non-objective rxns in the original irrevModel
-rxnsIndxs = find(model.c~=1);
+%and skip blocked reactions
+I=haveFlux(model);
+rxnsIndxs = find(model.c~=1 & I);
+
 %Set minimal media for ecModel
 pos = find(strcmpi(ecModel.rxns,[c_source '_REV']));
 %Gets the optimal value for the objective rxn in ecirrevModel and fixes its
@@ -49,13 +52,13 @@ if chemostat
     ecModel                = setParam(ecModel,'obj', index, -1);
 else
     %Optimize growth for ecModel
-    [gRate,~, ecModel] = fixObjective(ecModel,true);
+    [gRate,ecFluxDist, ecModel] = fixObjective(ecModel,true);
     %Fix minimal total protein usage in ecModel
     index                  = find(contains(ecModel.rxnNames,'prot_pool'));
     ecModel                = setParam(ecModel,'obj', index, -1);
 end
 %Get an optimal flux distribution for the ecModel
-[~,ecFluxDist,ecModel] = fixObjective(ecModel,false);
+%[~,ecFluxDist,ecModel] = fixObjective(ecModel,false);
 %Fix optimal carbon source uptake for the ecModel in the original model 
 %(Convention: GEMs represent uptake fluxes as negative values)
 carbonUptake = ecFluxDist(pos);
@@ -116,7 +119,7 @@ function [OptimalValue, optFluxDist, irrevModel] = fixObjective(irrevModel,fixed
 % Optimize and fixes objective value for GEM
 objIndx  = find(irrevModel.c~=0);
 if fixed 
-    factor = 0.99999;
+    factor = 0.99;%999;
 else
     factor = 0;
 end
