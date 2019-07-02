@@ -49,7 +49,7 @@ if ~isempty(measuredIndxs)
     sol           = solveLP(model,1);
     growth        = sol.x(objIndex);
     % iterate while growth is underpredicted
-    while growth<0.99*gRate
+    while growth<0.95*gRate
         [limIndex,flag] = findLimitingUBs(model,measuredIndxs,flexFactor,1);
         if ~flag
             [limIndex,~] = findLimitingUBs(model,measuredIndxs,flexFactor,2);
@@ -99,8 +99,8 @@ function [model,enzUsages] = getNewBounds(model,gRate,protIndxs,flexProts,gPos)
 %Now that the model is growing at least at the specified dilution rate
 %lets fix the growth rate and minimize enzymes usage
 objectiveVector      = model.c;
-model.lb(gPos)       = 0.99*gRate;
-model.ub(gPos)       = 1.01*gRate;
+model.lb(gPos)       = 0.95*gRate;
+model.ub(gPos)       = 1.05*gRate;
 model.c(:)           = 0;
 protIndexes          = contains(model.rxnNames,'prot_');
 model.c(protIndexes) = -1;
