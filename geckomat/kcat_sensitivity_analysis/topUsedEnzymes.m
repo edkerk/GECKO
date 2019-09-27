@@ -68,6 +68,6 @@ i=(2*i);
 outputFile = truncateValues(outputFile,i);
 T = cell2table(outputFile,'VariableNames',colNames);
 if writeFile
-    writetable(T,['../../models/' name '/' name '_topUsedEnzymes.txt'])
+    writetable(T,['../' name '_topUsedEnzymes.txt'])
 end
 end
